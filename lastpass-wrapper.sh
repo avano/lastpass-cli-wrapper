@@ -1,6 +1,4 @@
 #!/bin/bash
-ACCOUNT=$1
-ACTION=$2
 SCRIPT_HOME=$(dirname "$(readlink -f "$0")")
 
 get_window_id() {
@@ -148,11 +146,12 @@ record_credentials() {
 }
 
 check_lpass_session() {
+    lpass ls
     if [ $? -ne 0 ]; then
         if [[ ${USER} == *"Could not find specified account"* ]]; then
             exit 1
         fi
-        lpass login ${ACCOUNT}
+        lpass login $1
         USER=$(lpass show --username ${URL})
         if [ $? -ne 0 ]; then
             exit 1
@@ -165,11 +164,11 @@ main() {
     URL=$(get_title_url ${ID} | grep -oE "[a-zA-Z0-9]+\.[a-zA-Z]{2,3}$")
     case "$2" in
         "input-password")
-            check_lpass_session
+            check_lpass_session $1
             input_password
         ;;
         "input-user-password")
-            check_lpass_session
+            check_lpass_session $1
             input_user_password
         ;;
         "record-credentials")

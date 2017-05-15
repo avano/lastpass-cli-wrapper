@@ -20,7 +20,7 @@ Because the [LastPass extension can give out your passwords](https://www.engadge
 
 Either:
  * use Google Chrome + [Url in title](https://chrome.google.com/webstore/detail/url-in-title/ignpacbgnbnkaiooknalneoeladjnfgb?hl=en) with format `{title} - {hostname}`
- * or or change [some code](https://github.com/avano/lastpass-cli-wrapper/blob/master/lastpass-wrapper.sh#L6-L12) to parse the currently opened url in your browser
+ * or or change [some code](https://github.com/avano/lastpass-cli-wrapper/blob/master/lastpass-wrapper.sh#L4-L10) to parse the currently opened url in your browser
 
 Then you can use:
 
