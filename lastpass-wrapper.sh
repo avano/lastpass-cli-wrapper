@@ -2,7 +2,7 @@
 ACCOUNT=$1
 ACTION=$2
 SCRIPT_HOME=$(dirname "$(readlink -f "$0")")
-set -x
+
 get_window_id() {
     echo "$(wmctrl -l | grep -oP "(0x\w+)(?=.* [C]hrome)")"
 }
