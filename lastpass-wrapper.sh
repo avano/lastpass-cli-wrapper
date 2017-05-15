@@ -61,7 +61,6 @@ get_user_for_url() {
 }
 
 get_id_for_url() {
-    sleep 1s
     ID=$(lpass ls | grep ${URL})
     if [[ $(echo ${ID} | wc -l) -ne 1 ]]; then
         USER_ID=$(get_user_from_rofi)
@@ -134,9 +133,12 @@ record_credentials() {
     USERNAME=$(echo ${CREDENTIALS%Tab*})
     if [[ ! ${CREDENTIALS} == *"Tab"* ]]; then
         # Only username supplied, pw will be generated
-        PASSWORD=$(lpass generate --sync=now ${URL} 15)
+
+        PASSWORD=$(lpass generate --sync no tmp_placeholder 15)
+        # Change backslash to forward slash and % to %%
+        PASSWORD=$(echo ${PASSWORD} | sed 's#\\#\/#g' | sed 's#%#%%#g')
         # The command above will add a new record, so delete it because we will re-add it later
-        lpass rm $(get_id_for_url ${URL})
+        lpass rm tmp_placeholder
     else
         PASSWORD=$(echo ${CREDENTIALS#*Tab})
     fi
@@ -145,13 +147,6 @@ record_credentials() {
     unset PASSWORD
 }
 
-record() {
-    USER=$(lpass show --username ${URL})
-}
-
-test() {
-    echo "test"
-}
 check_lpass_session() {
     if [ $? -ne 0 ]; then
         if [[ ${USER} == *"Could not find specified account"* ]]; then
@@ -166,14 +161,15 @@ check_lpass_session() {
 }
 
 main() {
-    check_lpass_session
     ID=$(get_window_id)
-    URL=$(get_title_url ${ID})
+    URL=$(get_title_url ${ID} | grep -oE "[a-zA-Z0-9]+\.[a-zA-Z]{2,3}$")
     case "$2" in
         "input-password")
+            check_lpass_session
             input_password
         ;;
         "input-user-password")
+            check_lpass_session
             input_user_password
         ;;
         "record-credentials")
