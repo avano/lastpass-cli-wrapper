@@ -10,6 +10,12 @@ Allows you to input your passwords using xclip and xdotool and save your passwor
 
 Because the [LastPass extension can give out your passwords](https://www.engadget.com/2017/03/22/critical-exploits-found-in-lastpass-on-chrome-firefox/). And it is convenient to use keyboard shortcuts.
 
+## Prerequisites
+
+* LastPass-cli
+* Rofi
+* Python 2.7 (maybe others as well)
+
 ## How to use?
 
 Either:

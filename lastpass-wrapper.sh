@@ -71,7 +71,7 @@ get_id_for_url() {
 }
 
 get_user_from_rofi() {
-    USER_ID=$(get_username_id "$USER"| rofi -dmenu -p "Select account for $URL:")
+    USER_ID=$(get_username_id "${USER}"| rofi -dmenu -p "Select account for ${URL}:")
     if [[ ${USER_ID} == "Multiple matches found"* ]];
         then
             # Nothing was selected, exit
@@ -84,7 +84,7 @@ get_user_string() {
     USER=$(get_user_for_url)
 
     # Not found if empty, do nothing
-    if [ -z "$USER" ]; then
+    if [ -z "${USER}" ]; then
         exit 1
     fi
 
