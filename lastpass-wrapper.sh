@@ -1,12 +1,21 @@
 #!/bin/bash
 SCRIPT_HOME=$(dirname "$(readlink -f "$0")")
-
+WINDOWS=false
 get_window_id() {
-    echo "$(wmctrl -l | grep -oP "(0x\w+)(?=.* [C]hrome)")"
+    if [ ${WINDOWS} == false ]; then
+        echo "$(wmctrl -l | grep -oP "(0x\w+)(?=.* [C]hrome)")"
+    fi
 }
 
 get_title_url() {
-    echo "$(xprop -id $1 | grep "_NET_WM_NAME" | perl -ne '/\".* # (www.*\.)?(.*\.[a-zA-Z]{2,3})/ && print "$2"')"
+    WINDOW_TITLE=""
+
+    if [ $WINDOWS == false ]; then
+        WINDOW_TITLE=`xprop -id $1 | grep "_NET_WM_NAME"`
+    else
+        WINDOW_TITLE=`cmd /C tasklist /v /fo list /fi "IMAGENAME eq chrome.exe"`
+    fi
+    echo ${WINDOW_TITLE} | perl -ne '/\".* # (www.*\.)?(.*\.[a-zA-Z]{2,3})/ && print "$2"'
 }
 
 # Get username and id string for rofi
@@ -23,13 +32,21 @@ get_username_id() {
 
 # Print username and hit TAB
 input_username() {
-    xdotool type "$1"
-    xdotool key Tab
+    if [ $WINDOWS == false ]; then
+        xdotool type "$1"
+        xdotool key Tab
+    else
+        echo "TODO USERNAME"
+    fi
 }
 
 # Print password and clear clipboard
 paste_password() {
-    lpass show -p $1 | xclip -selection clipboard && sleep .25; xdotool type "$(xclip -o -selection clipboard)" && xclip -selection clipboard -i /dev/null
+    if [ $WINDOWS == false ]; then
+        lpass show -p $1 | xclip -selection clipboard && sleep .25; xdotool type "$(xclip -o -selection clipboard)" && xclip -selection clipboard -i /dev/null
+    else
+        echo "TODO PASSWORD"
+    fi
     exit 0
 }
 
@@ -162,8 +179,11 @@ check_lpass_session() {
 }
 
 main() {
+    if [[ "`uname -a`" == *"Cygwin"* ]]; then
+        WINDOWS=true
+    fi
     ID=$(get_window_id)
-    URL=$(get_title_url ${ID} | grep -oE "[a-zA-Z0-9]+\.[a-zA-Z]{2,3}$")
+    URL=$(get_title_url ${ID})
     case "$2" in
         "input-password")
             check_lpass_session $1
