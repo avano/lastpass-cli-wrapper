@@ -6,7 +6,7 @@ get_window_id() {
 }
 
 get_title_url() {
-    echo "$(xprop -id $1 | grep "_NET_WM_NAME" | perl -ne '/\".* - (www.*\.)?(.*\.[a-zA-Z]{2,3})/ && print "$2"')"
+    echo "$(xprop -id $1 | grep "_NET_WM_NAME" | perl -ne '/\".* # (www.*\.)?(.*\.[a-zA-Z]{2,3})/ && print "$2"')"
 }
 
 # Get username and id string for rofi
@@ -83,6 +83,7 @@ get_user_string() {
 
     # Not found if empty, do nothing
     if [ -z "${USER}" ]; then
+        notify-send -u critical "${URL}" "No user found"
         exit 1
     fi
 
@@ -149,6 +150,7 @@ check_lpass_session() {
     lpass ls
     if [ $? -ne 0 ]; then
         if [[ ${USER} == *"Could not find specified account"* ]]; then
+            notify-send -u critical "LastPass" "Could not find specified account"
             exit 1
         fi
         lpass login $1
@@ -165,13 +167,16 @@ main() {
     case "$2" in
         "input-password")
             check_lpass_session $1
+            notify-send -u normal "${URL}" "Getting password"
             input_password
         ;;
         "input-user-password")
             check_lpass_session $1
+            notify-send -u normal "${URL}" "Getting username and password"
             input_user_password
         ;;
         "record-credentials")
+            notify-send -u normal "${URL}" "Capturing username and password"
             record_credentials
         ;;
         *)
